@@ -8,6 +8,7 @@ public:
     explicit SirenLayer(int64_t dim_in, 
                        int64_t dim_out, 
                        bool is_first = false, 
+                       float w0, 
                        bool use_bias = true,
                        float c = 6.0f);
 

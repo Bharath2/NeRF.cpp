@@ -1,8 +1,8 @@
 #include "siren_nerf.h"
 
 SirenLayer::SirenLayer(int64_t dim_in, int64_t dim_out, 
-                       bool is_first, bool use_bias, float c)
-    : dim_in_(dim_in), is_first_(is_first), w0_(is_first ? 120.0f : 1.0f) {
+                       bool is_first, float w0, bool use_bias, float c)
+    : dim_in_(dim_in), is_first_(is_first), w0_(w0) {
     // Initialize weight and bias
     weight_ = register_parameter("weight", torch::zeros({dim_out, dim_in}));
     float w_std = is_first_ ? (1.0f / dim_in_) : (std::sqrt(c / dim_in_) / w0_);
@@ -28,12 +28,12 @@ SirenNeRF::SirenNeRF(torch::Device device, int W, int D): device_(device) {
     D = std::max(D, 2);
 
     // Create position encoder SIREN layers
-    pos_siren_ = std::make_shared<SirenLayer>(1, 64, true);
+    pos_siren_ = std::make_shared<SirenLayer>(1, 64, true, 120);
     register_module("pos_siren", pos_siren_);
     pos_siren_->to(device_);
 
     // Create view direction encoder SIREN layers
-    view_siren_ = std::make_shared<SirenLayer>(1, 32, true);
+    view_siren_ = std::make_shared<SirenLayer>(1, 32, true, 20);
     register_module("view_siren", view_siren_);
     view_siren_->to(device_);
 
