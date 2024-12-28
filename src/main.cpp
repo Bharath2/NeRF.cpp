@@ -2,21 +2,20 @@
 #include "renderer.h"
 #include "utils.h"
 #include <fstream>
-// #include "camera_utils.h"
 #include <random>
 
 //Training Loop options
 constexpr int n_iters = 6000;
 constexpr int log_freq = 50;
 constexpr int plot_freq = 100;
-constexpr int n_preview_frames = 30;
+constexpr int n_preview_frames = 5;
 constexpr int n_final_frames = 30;
 
 //Render options
 constexpr int batch_size = 1280000;
 constexpr float start_distance = 2.0f;
 constexpr float end_distance = 8.0f;
-constexpr int n_samples = 96;
+constexpr int n_samples = 96; //no. of samples along each Ray
 
 int main(int argc, char *argv[]) {
   // Parse command-line arguments
@@ -31,7 +30,7 @@ int main(int argc, char *argv[]) {
 
   // Load data: images, poses, and focal length
   std::filesystem::path transforms_path = data_path / "transforms.json";
-  Dataset dataset = load_dataset(transforms_path.string(), 120);
+  Dataset dataset = load_dataset(transforms_path.string(), 120); //images will be resized to 120x120
 
   // Display information about the loaded data
   std::cout << "Images: " << dataset.images.sizes() << std::endl;
@@ -79,8 +78,6 @@ int main(int argc, char *argv[]) {
     if (i % log_freq == 0) {
       std::cout << "Iteration: " << i + 1 
                 << " Loss: " << rgb_loss.item<float>()
-                << " Diversity Loss: " << diversity_loss.item<float>()
-                << " Total Loss: " << total_loss.item<float>()
                 << std::endl;
     }
 
@@ -88,9 +85,9 @@ int main(int argc, char *argv[]) {
     // Save preview images every 100 iterations
     if (i % plot_freq == 0) {
       torch::NoGradGuard no_grad;
-      render_and_save_orbit_views(renderer, i, 240, 240,  // Add H, W parameters
-                               n_preview_frames, output_path, 2.1f,
-                               0.8f, 3.2f);
+      render_views(renderer, std::to_string(i), 240, 240, //saves 240x240 images
+                   n_preview_frames, output_path, 2.1f,
+                   0.8f, 3.2f);
       auto checkpoint_path = output_path / "checkpoint.pt";
       save_checkpoint(checkpoint_path, model, optimizer, i);
     }
@@ -101,11 +98,11 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Done" << std::endl;
 
-  // Generate high-resolution rendering using the trained model
+  // Generate the final render using the trained model
   torch::NoGradGuard no_grad;
-  render_and_save_orbit_views(renderer, 11, 240, 240,  // Add H, W parameters
-                               n_final_frames, output_path, 2.1f,
-                               0.8f, 3.2f);
+  render_views(renderer, "final", 240, 240, 
+               n_final_frames, output_path, 2.1f,
+               0.8f, 3.2f);
 
   return 0;
 }

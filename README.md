@@ -1,7 +1,9 @@
 # NeRF.cpp
 NeRF implementation with Siren layers in C++.
 
-![NeRF Animation](./output/animation.gif)
+<p align="center">
+  <img src="./output/animation.gif" alt="NeRF Animation" loop="infinite"/>
+</p>
 
 ## Requirements
 - CUDA

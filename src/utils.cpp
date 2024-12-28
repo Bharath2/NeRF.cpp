@@ -72,7 +72,7 @@ void save_image(const torch::Tensor &tensor, const std::filesystem::path &file_p
 }
 
 
-// Read camera poses from transforms.json
+// Read camera poses  and Images from transforms.json
 Dataset load_dataset(const std::string& json_path, int target_width) {
     std::vector<torch::Tensor> poses;
     std::vector<torch::Tensor> images;
@@ -133,12 +133,12 @@ Dataset load_dataset(const std::string& json_path, int target_width) {
 }
 
 
-void render_and_save_orbit_views(const NeRFRenderer &renderer, 
-                               int n, int H, int W,
-                               int num_frames,
-                               const std::filesystem::path &output_folder,
-                               float radius, float start_distance,
-                               float end_distance, int n_samples) {
+void render_views(const NeRFRenderer &renderer, 
+                  const std::string &prefix, int H, int W,
+                  int num_frames,
+                  const std::filesystem::path &output_folder,
+                  float radius, float start_distance,
+                  float end_distance, int n_samples) {
   float elevation = -30.0f;
   auto device = get_device();
 
@@ -152,10 +152,10 @@ void render_and_save_orbit_views(const NeRFRenderer &renderer,
         renderer.render_rays(H, W, pose, SampleStrategy::UNIFORM, 
                            start_distance, end_distance, n_samples);
 
-    std::string file_path = output_folder / ("frame_" + std::to_string(n) + "_" + std::to_string(i) + ".png");
+    std::string file_path = output_folder / ("frame_" + prefix + "_" + std::to_string(i) + ".png");
     save_image(rendered_output.rgb, file_path);
 
-    std::string depth_file_path = output_folder / ("frame_depth_" + std::to_string(n) + "_" + std::to_string(i) + ".png");
+    std::string depth_file_path = output_folder / ("frame_depth_" + prefix + "_" + std::to_string(i) + ".png");
     auto depth_min = rendered_output.depth.min();
     auto depth_max = rendered_output.depth.max();
     auto depth_normalized = (rendered_output.depth - depth_min) / (depth_max - depth_min);
