@@ -1,9 +1,11 @@
 # NeRF.cpp
-
-
-<img src="./output/animation.gif" alt="NeRF Animation"/>
-
 NeRF implementation with Siren layers in C++.
+
+| <img src="./output/rgb.gif" alt="NeRF RGB Animation" style="display:inline-block"/> | <img src="./output/depth.gif" alt="NeRF Depth Map" style="display:inline-block"/> |
+|:-------------:|:---------:|
+| **RGB** | **Depth Map** |
+
+
 ## Requirements
 - CUDA
 - LibTorch

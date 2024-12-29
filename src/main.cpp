@@ -14,8 +14,8 @@ constexpr int n_final_frames = 30;
 //Render options
 constexpr int batch_size = 1280000;
 constexpr float start_distance = 2.0f;
-constexpr float end_distance = 8.0f;
-constexpr int n_samples = 96; //no. of samples along each Ray
+constexpr float end_distance = 6.0f;
+constexpr int n_samples = 128; //no. of samples along each Ray
 
 int main(int argc, char *argv[]) {
   // Parse command-line arguments
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
   std::uniform_int_distribution<int> dist(0, dataset.len - 1);
 
   // Train the NeRF model
-  for (int i = 0; i < n_iters; i++) {
+  for (int i = 0; i <= n_iters; i++) {
     // Sample a random image and its corresponding pose
     int img_i = dist(rng);
     auto target = dataset.images[img_i].to(device);
