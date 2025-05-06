@@ -1,5 +1,6 @@
 # NeRF.cpp
-NeRF implementation with Siren layers in C++.
+NeRF implementation in C++, for 3D reconstruction and Novel View Synthesis, with siren layers.  
+<!-- and a proposal network for efficient ray sampling during training. -->
 
 | <img src="./output/rgb.gif" alt="NeRF RGB Animation" style="display:inline-block"/> | <img src="./output/depth.gif" alt="NeRF Depth Map" style="display:inline-block"/> |
 |:-------------:|:---------:|
